@@ -13,6 +13,10 @@
 		D5A9E85825EED015009D2464 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A9E84325EED014009D2464 /* ContentView.swift */; };
 		D5A9E85925EED015009D2464 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D5A9E84425EED015009D2464 /* Assets.xcassets */; };
 		D5A9E85A25EED015009D2464 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D5A9E84425EED015009D2464 /* Assets.xcassets */; };
+		D5A9E86625EED028009D2464 /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A9E86525EED028009D2464 /* MetalView.swift */; };
+		D5A9E86A25EED030009D2464 /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A9E86925EED030009D2464 /* MetalView.swift */; };
+		D5A9E86E25EED041009D2464 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A9E86D25EED041009D2464 /* Coordinator.swift */; };
+		D5A9E86F25EED041009D2464 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A9E86D25EED041009D2464 /* Coordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +28,9 @@
 		D5A9E85125EED015009D2464 /* MeshViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MeshViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5A9E85325EED015009D2464 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D5A9E85425EED015009D2464 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
+		D5A9E86525EED028009D2464 /* MetalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
+		D5A9E86925EED030009D2464 /* MetalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
+		D5A9E86D25EED041009D2464 /* Coordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +66,7 @@
 			children = (
 				D5A9E84225EED014009D2464 /* MeshViewerApp.swift */,
 				D5A9E84325EED014009D2464 /* ContentView.swift */,
+				D5A9E86D25EED041009D2464 /* Coordinator.swift */,
 				D5A9E84425EED015009D2464 /* Assets.xcassets */,
 			);
 			path = Shared;
@@ -77,6 +85,7 @@
 			isa = PBXGroup;
 			children = (
 				D5A9E84C25EED015009D2464 /* Info.plist */,
+				D5A9E86925EED030009D2464 /* MetalView.swift */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -84,6 +93,7 @@
 		D5A9E85225EED015009D2464 /* macOS */ = {
 			isa = PBXGroup;
 			children = (
+				D5A9E86525EED028009D2464 /* MetalView.swift */,
 				D5A9E85325EED015009D2464 /* Info.plist */,
 				D5A9E85425EED015009D2464 /* macOS.entitlements */,
 			);
@@ -187,6 +197,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5A9E86E25EED041009D2464 /* Coordinator.swift in Sources */,
+				D5A9E86A25EED030009D2464 /* MetalView.swift in Sources */,
 				D5A9E85725EED015009D2464 /* ContentView.swift in Sources */,
 				D5A9E85525EED015009D2464 /* MeshViewerApp.swift in Sources */,
 			);
@@ -196,6 +208,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5A9E86F25EED041009D2464 /* Coordinator.swift in Sources */,
+				D5A9E86625EED028009D2464 /* MetalView.swift in Sources */,
 				D5A9E85825EED015009D2464 /* ContentView.swift in Sources */,
 				D5A9E85625EED015009D2464 /* MeshViewerApp.swift in Sources */,
 			);
