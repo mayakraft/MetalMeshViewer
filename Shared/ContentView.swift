@@ -8,14 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-      MetalView()
-        .frame(minWidth: 0, idealWidth: 600, maxWidth: .infinity, minHeight: 0, idealHeight: 600, maxHeight: .infinity, alignment: .center)
-    }
+  var body: some View {
+    MetalView()
+      .frame(minWidth: 0,
+             idealWidth: 600,
+             maxWidth: .infinity,
+             minHeight: 0,
+             idealHeight: 600,
+             maxHeight: .infinity,
+             alignment: .center)
+  }
 }
 
 struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+  static var previews: some View {
+    ContentView()
+  }
 }
