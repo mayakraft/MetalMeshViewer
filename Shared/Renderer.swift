@@ -61,23 +61,36 @@ struct Uniforms {
 }
 
 class Renderer: NSObject, MTKViewDelegate {
-  var parent: MetalView
 
-  // must set mtkView
-  var mtkView: MTKView? {
-    didSet {
-      loadResources()
-      buildPipeline()
-    }
-  }
-
+  let parent: MetalView
   let device: MTLDevice!
   let commandQueue: MTLCommandQueue
   var vertexDescriptor: MTLVertexDescriptor!
   var renderPipeline: MTLRenderPipelineState!
+  var depthStencilState: MTLDepthStencilState!
   var vertexBuffer: MTLBuffer!
   var meshes: [MTKMesh] = []
   var time: Float = 0
+
+  // must set mtkView
+  var mtkView: MTKView? {
+    didSet {
+      if let mtkView = self.mtkView {
+        mtkView.preferredFramesPerSecond = 60
+        mtkView.enableSetNeedsDisplay = true
+        mtkView.device = self.device
+        mtkView.framebufferOnly = false
+        mtkView.clearColor = MTLClearColor(red: 1, green: 1, blue: 1, alpha: 1)
+        mtkView.drawableSize = mtkView.frame.size
+        mtkView.enableSetNeedsDisplay = true
+        mtkView.isPaused = false
+        mtkView.colorPixelFormat = .bgra8Unorm_srgb
+        mtkView.depthStencilPixelFormat = .depth32Float
+        loadResources()
+        buildPipeline(view: mtkView)
+      }
+    }
+  }
 
   init(_ parent: MetalView) {
     self.parent = parent
@@ -105,10 +118,14 @@ class Renderer: NSObject, MTKViewDelegate {
 
     // HACK
     self.vertexBuffer = meshes[0].vertexBuffers[0].buffer
+
+    let depthDesecriptor = MTLDepthStencilDescriptor()
+    depthDesecriptor.depthCompareFunction = .lessEqual
+    depthDesecriptor.isDepthWriteEnabled = true
+    self.depthStencilState = device.makeDepthStencilState(descriptor: depthDesecriptor)
   }
   
-  func buildPipeline() {
-    guard let mtkView = self.mtkView else { return }
+  func buildPipeline(view: MTKView) {
     guard let library = device.makeDefaultLibrary() else {
       fatalError("Could not load default library from main bundle")
     }
@@ -117,7 +134,9 @@ class Renderer: NSObject, MTKViewDelegate {
     let pipelineDescriptor = MTLRenderPipelineDescriptor()
     pipelineDescriptor.vertexFunction = vertexFunction
     pipelineDescriptor.fragmentFunction = fragmentFunction
-    pipelineDescriptor.colorAttachments[0].pixelFormat = mtkView.colorPixelFormat
+    pipelineDescriptor.colorAttachments[0].pixelFormat = view.colorPixelFormat
+    pipelineDescriptor.depthAttachmentPixelFormat = view.depthStencilPixelFormat
+
     pipelineDescriptor.vertexDescriptor = self.vertexDescriptor
     do {
       renderPipeline = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
@@ -141,23 +160,24 @@ class Renderer: NSObject, MTKViewDelegate {
 //    commandBuffer?.present(drawable)
 //    commandBuffer?.commit()
 
-    guard let mtkView = self.mtkView else { return }
     let commandBuffer = commandQueue.makeCommandBuffer()!
     if let renderPassDescriptor = view.currentRenderPassDescriptor, let drawable = view.currentDrawable {
       let commandEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
       
-      time += 1 / Float(mtkView.preferredFramesPerSecond)
-      let angle = -time
+      time += 1 / Float(view.preferredFramesPerSecond)
+      let angle = time
       let modelMatrix = float4x4(rotationAbout: SIMD3<Float>(0, 1, 0), by: angle)
-      let viewMatrix = float4x4(translationBy: SIMD3<Float>(0, 0, -1))
+      let viewMatrix = float4x4(translationBy: SIMD3<Float>(0, -0.1, -0.2))
       let modelViewMatrix = viewMatrix * modelMatrix
       let aspectRatio = Float(view.drawableSize.width / view.drawableSize.height)
-      let projectionMatrix = float4x4(perspectiveProjectionFov: Float.pi / 3, aspectRatio: aspectRatio, nearZ: 0.1, farZ: 100)
+      let projectionMatrix = float4x4(perspectiveProjectionFov: Float.pi / 3, aspectRatio: aspectRatio, nearZ: 0.01, farZ: 100)
       var uniforms = Uniforms(modelViewMatrix: modelViewMatrix, projectionMatrix: projectionMatrix)
       commandEncoder.setVertexBytes(&uniforms, length: MemoryLayout<Uniforms>.size, index: 1)
 
       commandEncoder.setRenderPipelineState(renderPipeline)
       commandEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+      
+      commandEncoder.setDepthStencilState(depthStencilState)
 
       for mesh in meshes {
         for submesh in mesh.submeshes {

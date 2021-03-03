@@ -92,8 +92,8 @@
 		D5A9E84B25EED015009D2464 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				D5A9E84C25EED015009D2464 /* Info.plist */,
 				D5A9E86925EED030009D2464 /* MetalView.swift */,
+				D5A9E84C25EED015009D2464 /* Info.plist */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
