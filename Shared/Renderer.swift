@@ -71,6 +71,9 @@ class Renderer: NSObject, MTKViewDelegate {
   var vertexBuffer: MTLBuffer!
   var meshes: [MTKMesh] = []
   var time: Float = 0
+  
+  var modelCenter: [Float] = [0, 0, 0]
+  var modelSize: [Float] = [1, 1, 1]
 
   // must set mtkView
   var mtkView: MTKView? {
@@ -80,7 +83,9 @@ class Renderer: NSObject, MTKViewDelegate {
         mtkView.enableSetNeedsDisplay = true
         mtkView.device = self.device
         mtkView.framebufferOnly = false
-        mtkView.clearColor = MTLClearColor(red: 1, green: 1, blue: 1, alpha: 1)
+//        mtkView.clearColor = MTLClearColor(red: 1, green: 1, blue: 1, alpha: 1)
+//        mtkView.clearColor = MTLClearColor(red: 0.01, green: 0.01, blue: 0.01, alpha: 1)
+        mtkView.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
         mtkView.drawableSize = mtkView.frame.size
         mtkView.enableSetNeedsDisplay = true
         mtkView.isPaused = false
@@ -118,6 +123,13 @@ class Renderer: NSObject, MTKViewDelegate {
 
     // HACK
     self.vertexBuffer = meshes[0].vertexBuffers[0].buffer
+    
+    let dimensions = analyzeMesh(mesh: meshes[0])
+//    print("center \(dimensions.0)")
+//    print("sizes \(dimensions.1)")
+    self.modelCenter = dimensions.0
+    self.modelSize = dimensions.1
+
 
     let depthDesecriptor = MTLDepthStencilDescriptor()
     depthDesecriptor.depthCompareFunction = .lessEqual
@@ -144,6 +156,32 @@ class Renderer: NSObject, MTKViewDelegate {
       fatalError("Could not create render pipeline state object \(error)")
     }
   }
+  
+  func analyzeMesh(mesh: MTKMesh) -> ([Float], [Float]) {
+//    print("analysis count vert \(mesh.vertexCount) submesh \(mesh.submeshes.count)")
+    let verts = mesh.vertexBuffers[0]
+//    print("Analysis \(verts.length) \(verts.name) \(verts.offset)")
+    let vertices = verts.buffer.contents().bindMemory(to: Float.self, capacity: mesh.vertexCount * 3)
+//    print("vertices 0 1 2 \(vertices[0]) \(vertices[1]) \(vertices[2])")
+//    print("vertices 3 4 5 \(vertices[3]) \(vertices[4]) \(vertices[5])")
+//    print("vertices 6 7 8 \(vertices[6]) \(vertices[7]) \(vertices[8])")
+    var mins = [Float.infinity, Float.infinity, Float.infinity]
+    var maxs = [-Float.infinity, -Float.infinity, -Float.infinity]
+    for i in 0..<mesh.vertexCount {
+      if vertices[i*8+0] > maxs[0] { maxs[0] = vertices[i*8+0] }
+      if vertices[i*8+1] > maxs[1] { maxs[1] = vertices[i*8+1] }
+      if vertices[i*8+2] > maxs[2] { maxs[2] = vertices[i*8+2] }
+      if vertices[i*8+0] < mins[0] { mins[0] = vertices[i*8+0] }
+      if vertices[i*8+1] < mins[1] { mins[1] = vertices[i*8+1] }
+      if vertices[i*8+2] < mins[2] { mins[2] = vertices[i*8+2] }
+    }
+//    print("maxs \(maxs)")
+//    print("mins \(mins)")
+    
+    let bounds = [0, 1, 2].map { maxs[$0] - mins[$0] }
+    let center = [0, 1, 2].map { mins[$0] + (bounds[$0] / 2) }
+    return (center, bounds)
+  }
 
   func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
   }
@@ -166,9 +204,15 @@ class Renderer: NSObject, MTKViewDelegate {
       
       time += 1 / Float(view.preferredFramesPerSecond)
       let angle = time
+      let centerMatrix = float4x4(translationBy: SIMD3<Float>(-modelCenter[0],
+                                                              -modelCenter[1],
+                                                              -modelCenter[2]))
+//      let modelCenter = float4x4(translationBy: SIMD3<Float>(center[0], center[1], center[2]))
       let modelMatrix = float4x4(rotationAbout: SIMD3<Float>(0, 1, 0), by: angle)
-      let viewMatrix = float4x4(translationBy: SIMD3<Float>(0, -0.1, -0.2))
-      let modelViewMatrix = viewMatrix * modelMatrix
+//      let viewMatrix = float4x4(translationBy: SIMD3<Float>(0, -0.1, -0.2))
+      let viewMatrix = float4x4(translationBy: SIMD3<Float>(0, 0, -0.2))
+//      let viewMatrix = float4x4(translationBy: SIMD3<Float>(-center[0], -center[1], -center[2]))
+      let modelViewMatrix = viewMatrix * (modelMatrix * centerMatrix)
       let aspectRatio = Float(view.drawableSize.width / view.drawableSize.height)
       let projectionMatrix = float4x4(perspectiveProjectionFov: Float.pi / 3, aspectRatio: aspectRatio, nearZ: 0.01, farZ: 100)
       var uniforms = Uniforms(modelViewMatrix: modelViewMatrix, projectionMatrix: projectionMatrix)

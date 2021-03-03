@@ -42,6 +42,6 @@ vertex VertexOut vertex_main(VertexIn vertexIn [[stage_in]],
 
 fragment float4 fragment_main(VertexOut fragmentIn [[stage_in]]) {
 //  return float4(abs(fragmentIn.pos.xyz)*5, 1);
-  return float4((fragmentIn.pos.xyz - float3(0, 0.1, 0))*3, 1);
+  return float4((fragmentIn.pos.xyz - float3(0, 0.1, 0))*5, 1);
 //  return float4(0, 0, 1, 1);
 }

@@ -20,6 +20,9 @@ struct MetalView: NSViewRepresentable {
 
   func makeNSView(context: NSViewRepresentableContext<MetalView>) -> MTKView {
     mtkView.delegate = context.coordinator
+    // transparent on MacOS only
+    mtkView.layer?.backgroundColor = NSColor.clear.cgColor
+    mtkView.layer?.isOpaque = false
     return mtkView
   }
 
