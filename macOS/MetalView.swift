@@ -10,7 +10,7 @@ import MetalKit
 
 struct MetalView: NSViewRepresentable {
 
-  let mtkView = MTKView()
+  let mtkView = MTKTouchView()
 
   func makeCoordinator() -> Renderer {
     let renderer = Renderer(self)

@@ -7,24 +7,25 @@
 
 import SwiftUI
 
-// make a visual effects view, but only on MacOS
-#if os(iOS)
-struct VisualEffectView: UIViewRepresentable {
-  func makeUIView(context: Context) -> some UIView {
-    UIView()
-  }
-  func updateUIView(_ uiView: UIViewType, context: Context) { }
-}
-#else
+// this is not necessary. make MacOS a translucent background
+// by making a visual effects view. only works on MacOS.
+#if os(macOS)
 struct VisualEffectView: NSViewRepresentable {
   func makeNSView(context: Context) -> NSVisualEffectView {
     let view = NSVisualEffectView()
     view.blendingMode = .behindWindow
     view.isEmphasized = true
-    view.material = .popover // .underWindowBackground
+//    view.material = .popover // .underWindowBackground
     return view
   }
   func updateNSView(_ nsView: NSVisualEffectView, context: Context) { }
+}
+#elseif os(iOS)
+struct VisualEffectView: UIViewRepresentable {
+  func makeUIView(context: Context) -> some UIView {
+    UIView()
+  }
+  func updateUIView(_ uiView: UIViewType, context: Context) { }
 }
 #endif
 

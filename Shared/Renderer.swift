@@ -60,7 +60,7 @@ struct Uniforms {
   var projectionMatrix: float4x4
 }
 
-class Renderer: NSObject, MTKViewDelegate {
+class Renderer: NSObject, MTKViewDelegate, MetalTouchDelegate {
 
   let parent: MetalView
   let device: MTLDevice!
@@ -70,27 +70,29 @@ class Renderer: NSObject, MTKViewDelegate {
   var depthStencilState: MTLDepthStencilState!
   var vertexBuffer: MTLBuffer!
   var meshes: [MTKMesh] = []
-  var time: Float = 0
   
+  var meshOrientation: simd_quatf = simd_quatf(simd_float3x3(1))
+  var touchDownOrientation: simd_quatf = simd_quatf(simd_float3x3(1))
+
   var modelCenter: [Float] = [0, 0, 0]
   var modelSize: [Float] = [1, 1, 1]
 
   // must set mtkView
-  var mtkView: MTKView? {
+  var mtkView: MTKTouchView? {
     didSet {
       if let mtkView = self.mtkView {
         mtkView.preferredFramesPerSecond = 60
         mtkView.enableSetNeedsDisplay = true
         mtkView.device = self.device
         mtkView.framebufferOnly = false
-//        mtkView.clearColor = MTLClearColor(red: 1, green: 1, blue: 1, alpha: 1)
-//        mtkView.clearColor = MTLClearColor(red: 0.01, green: 0.01, blue: 0.01, alpha: 1)
         mtkView.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
         mtkView.drawableSize = mtkView.frame.size
         mtkView.enableSetNeedsDisplay = true
         mtkView.isPaused = false
         mtkView.colorPixelFormat = .bgra8Unorm_srgb
         mtkView.depthStencilPixelFormat = .depth32Float
+        // touch delegate
+        mtkView.touchDelegate = self
         loadResources()
         buildPipeline(view: mtkView)
       }
@@ -103,7 +105,24 @@ class Renderer: NSObject, MTKViewDelegate {
     self.commandQueue = device.makeCommandQueue()!
     super.init()
   }
-
+  
+  func didPress() {
+    touchDownOrientation = meshOrientation
+  }
+  
+  func didDrag(x: Float, y: Float) {
+    let magnitude = sqrt( x * x + y * y)
+    let currentMatrix = simd_float4x4(touchDownOrientation)
+    let screenVector = simd_float4(-y / magnitude, x / magnitude, 0, 1)
+    let touchVector = screenVector * currentMatrix
+    let axis = SIMD3<Float>(touchVector.x, touchVector.y, touchVector.z)
+    let frame = mtkView?.frame ?? NSRect.init(x: 0, y: 0, width: 100, height: 100)
+    let smallSize = Float(frame.width < frame.height ? frame.width : frame.height)
+    // todo, make rotation angle magnitude a factor based on the screen pixel size
+    let rotation = simd_quatf(angle: 3 * magnitude / smallSize, axis: axis)
+    meshOrientation = touchDownOrientation * rotation
+  }
+  
   func loadResources() {
     let modelURL = Bundle.main.url(forResource: "bunny", withExtension: "obj")!
     let vertexDescriptor = MDLVertexDescriptor()
@@ -202,13 +221,14 @@ class Renderer: NSObject, MTKViewDelegate {
     if let renderPassDescriptor = view.currentRenderPassDescriptor, let drawable = view.currentDrawable {
       let commandEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
       
-      time += 1 / Float(view.preferredFramesPerSecond)
-      let angle = time
+//      time += 1 / Float(view.preferredFramesPerSecond)
       let centerMatrix = float4x4(translationBy: SIMD3<Float>(-modelCenter[0],
                                                               -modelCenter[1],
                                                               -modelCenter[2]))
 //      let modelCenter = float4x4(translationBy: SIMD3<Float>(center[0], center[1], center[2]))
-      let modelMatrix = float4x4(rotationAbout: SIMD3<Float>(0, 1, 0), by: angle)
+      
+      let modelMatrix = float4x4(meshOrientation)
+//      let modelMatrix = float4x4(rotationAbout: SIMD3<Float>(0, 1, 0), by: angle)
 //      let viewMatrix = float4x4(translationBy: SIMD3<Float>(0, -0.1, -0.2))
       let viewMatrix = float4x4(translationBy: SIMD3<Float>(0, 0, -0.2))
 //      let viewMatrix = float4x4(translationBy: SIMD3<Float>(-center[0], -center[1], -center[2]))

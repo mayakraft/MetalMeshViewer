@@ -21,6 +21,7 @@
 		D5A9E88925EEF00C009D2464 /* bunny.obj in Resources */ = {isa = PBXBuildFile; fileRef = D5A9E88725EEF00C009D2464 /* bunny.obj */; };
 		D5A9E89725EEFE40009D2464 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = D5A9E89625EEFE40009D2464 /* Shaders.metal */; };
 		D5A9E89825EEFE40009D2464 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = D5A9E89625EEFE40009D2464 /* Shaders.metal */; };
+		D5FCC2CB25F03417003D801F /* MTKTouchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5FCC2CA25F03417003D801F /* MTKTouchView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		D5A9E87225EEE2B7009D2464 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
 		D5A9E88725EEF00C009D2464 /* bunny.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bunny.obj; sourceTree = "<group>"; };
 		D5A9E89625EEFE40009D2464 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		D5FCC2CA25F03417003D801F /* MTKTouchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTKTouchView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				D5A9E86525EED028009D2464 /* MetalView.swift */,
+				D5FCC2CA25F03417003D801F /* MTKTouchView.swift */,
 				D5A9E85325EED015009D2464 /* Info.plist */,
 				D5A9E85425EED015009D2464 /* macOS.entitlements */,
 			);
@@ -224,6 +227,7 @@
 				D5A9E85825EED015009D2464 /* ContentView.swift in Sources */,
 				D5A9E87425EEE2B7009D2464 /* Renderer.swift in Sources */,
 				D5A9E85625EED015009D2464 /* MeshViewerApp.swift in Sources */,
+				D5FCC2CB25F03417003D801F /* MTKTouchView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
