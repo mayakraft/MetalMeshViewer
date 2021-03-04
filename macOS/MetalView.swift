@@ -10,16 +10,14 @@ import MetalKit
 
 struct MetalView: NSViewRepresentable {
 
-  let mtkView = MTKTouchView()
-
   func makeCoordinator() -> Renderer {
-    let renderer = Renderer(self)
-    renderer.mtkView = self.mtkView
-    return renderer
+    Renderer(self)
   }
 
   func makeNSView(context: NSViewRepresentableContext<MetalView>) -> MTKView {
+    let mtkView = MTKMouseView()
     mtkView.delegate = context.coordinator
+    context.coordinator.mtkView = mtkView
     // transparent on MacOS only
     mtkView.layer?.backgroundColor = NSColor.clear.cgColor
     mtkView.layer?.isOpaque = false

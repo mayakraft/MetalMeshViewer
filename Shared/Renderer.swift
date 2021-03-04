@@ -61,7 +61,6 @@ struct Uniforms {
 }
 
 class Renderer: NSObject, MTKViewDelegate, MetalTouchDelegate {
-
   let parent: MetalView
   let device: MTLDevice!
   let commandQueue: MTLCommandQueue
@@ -71,14 +70,16 @@ class Renderer: NSObject, MTKViewDelegate, MetalTouchDelegate {
   var vertexBuffer: MTLBuffer!
   var meshes: [MTKMesh] = []
   
-  var meshOrientation: simd_quatf = simd_quatf(simd_float3x3(1))
+  var modelOrientation: simd_quatf = simd_quatf(simd_float3x3(1))
   var touchDownOrientation: simd_quatf = simd_quatf(simd_float3x3(1))
 
   var modelCenter: [Float] = [0, 0, 0]
   var modelSize: [Float] = [1, 1, 1]
 
   // must set mtkView
-  var mtkView: MTKTouchView? {
+  var mtkView: MTKGestureView? {
+//  var mtkView: MTKTouchView? {
+//  var mtkView: MTKMouseView? {
     didSet {
       if let mtkView = self.mtkView {
         mtkView.preferredFramesPerSecond = 60
@@ -107,20 +108,21 @@ class Renderer: NSObject, MTKViewDelegate, MetalTouchDelegate {
   }
   
   func didPress() {
-    touchDownOrientation = meshOrientation
+    touchDownOrientation = modelOrientation
   }
   
   func didDrag(x: Float, y: Float) {
-    let magnitude = sqrt( x * x + y * y)
+    let magnitude = sqrt(x * x + y * y)
     let currentMatrix = simd_float4x4(touchDownOrientation)
     let screenVector = simd_float4(-y / magnitude, x / magnitude, 0, 1)
     let touchVector = screenVector * currentMatrix
     let axis = SIMD3<Float>(touchVector.x, touchVector.y, touchVector.z)
-    let frame = mtkView?.frame ?? NSRect.init(x: 0, y: 0, width: 100, height: 100)
+//    let frame = mtkView?.frame ?? NSRect.init(x: 0, y: 0, width: 100, height: 100)
+    let frame = mtkView!.frame
     let smallSize = Float(frame.width < frame.height ? frame.width : frame.height)
     // todo, make rotation angle magnitude a factor based on the screen pixel size
     let rotation = simd_quatf(angle: 3 * magnitude / smallSize, axis: axis)
-    meshOrientation = touchDownOrientation * rotation
+    modelOrientation = touchDownOrientation * rotation
   }
   
   func loadResources() {
@@ -134,6 +136,7 @@ class Renderer: NSObject, MTKViewDelegate, MetalTouchDelegate {
     self.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(vertexDescriptor)
     let bufferAllocator = MTKMeshBufferAllocator(device: device)
     let asset = MDLAsset(url: modelURL, vertexDescriptor: vertexDescriptor, bufferAllocator: bufferAllocator)
+
     do {
       (_, meshes) = try MTKMesh.newMeshes(asset: asset, device: device)
     } catch {
@@ -142,18 +145,26 @@ class Renderer: NSObject, MTKViewDelegate, MetalTouchDelegate {
 
     // HACK
     self.vertexBuffer = meshes[0].vertexBuffers[0].buffer
-    
-    let dimensions = analyzeMesh(mesh: meshes[0])
-//    print("center \(dimensions.0)")
-//    print("sizes \(dimensions.1)")
-    self.modelCenter = dimensions.0
-    self.modelSize = dimensions.1
-
 
     let depthDesecriptor = MTLDepthStencilDescriptor()
     depthDesecriptor.depthCompareFunction = .lessEqual
     depthDesecriptor.isDepthWriteEnabled = true
     self.depthStencilState = device.makeDepthStencilState(descriptor: depthDesecriptor)
+
+    let boundingBox = asset.boundingBox
+    self.modelSize = [0, 1, 2].map { boundingBox.maxBounds[$0] - boundingBox.minBounds[$0] }
+    self.modelCenter = [0, 1, 2].map { boundingBox.minBounds[$0] + self.modelSize[$0] / 2 }
+//    analyzeMesh(mesh: meshes[0])
+//    self.modelCenter = dimensions.0
+//    self.modelSize = dimensions.1
+
+//    MDLMeshBufferAllocator
+//    MDLMeshBuffer
+//    MDLSubmesh(indexBuffer: <#T##MDLMeshBuffer#>, indexCount: <#T##Int#>, indexType: <#T##MDLIndexBitDepth#>, geometryType: <#T##MDLGeometryType#>, material: <#T##MDLMaterial?#>)
+//    MDLMesh(vertexBuffer: <#T##MDLMeshBuffer#>, vertexCount: <#T##Int#>, descriptor: <#T##MDLVertexDescriptor#>, submeshes: <#T##[MDLSubmesh]#>)
+
+//    addNormals(withAttributeNamed:creaseThreshold:)
+
   }
   
   func buildPipeline(view: MTKView) {
@@ -176,14 +187,14 @@ class Renderer: NSObject, MTKViewDelegate, MetalTouchDelegate {
     }
   }
   
-  func analyzeMesh(mesh: MTKMesh) -> ([Float], [Float]) {
+  func analyzeMesh(mesh: MTKMesh) {
 //    print("analysis count vert \(mesh.vertexCount) submesh \(mesh.submeshes.count)")
     let verts = mesh.vertexBuffers[0]
 //    print("Analysis \(verts.length) \(verts.name) \(verts.offset)")
     let vertices = verts.buffer.contents().bindMemory(to: Float.self, capacity: mesh.vertexCount * 3)
-//    print("vertices 0 1 2 \(vertices[0]) \(vertices[1]) \(vertices[2])")
-//    print("vertices 3 4 5 \(vertices[3]) \(vertices[4]) \(vertices[5])")
-//    print("vertices 6 7 8 \(vertices[6]) \(vertices[7]) \(vertices[8])")
+    print("vertices 0 1 2 \(vertices[0]) \(vertices[1]) \(vertices[2])")
+    print("vertices 3 4 5 \(vertices[3]) \(vertices[4]) \(vertices[5])")
+    print("vertices 6 7 8 \(vertices[6]) \(vertices[7]) \(vertices[8])")
     var mins = [Float.infinity, Float.infinity, Float.infinity]
     var maxs = [-Float.infinity, -Float.infinity, -Float.infinity]
     for i in 0..<mesh.vertexCount {
@@ -196,10 +207,9 @@ class Renderer: NSObject, MTKViewDelegate, MetalTouchDelegate {
     }
 //    print("maxs \(maxs)")
 //    print("mins \(mins)")
-    
-    let bounds = [0, 1, 2].map { maxs[$0] - mins[$0] }
-    let center = [0, 1, 2].map { mins[$0] + (bounds[$0] / 2) }
-    return (center, bounds)
+//
+//    let bounds = [0, 1, 2].map { maxs[$0] - mins[$0] }
+//    let center = [0, 1, 2].map { mins[$0] + (bounds[$0] / 2) }
   }
 
   func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
@@ -227,7 +237,7 @@ class Renderer: NSObject, MTKViewDelegate, MetalTouchDelegate {
                                                               -modelCenter[2]))
 //      let modelCenter = float4x4(translationBy: SIMD3<Float>(center[0], center[1], center[2]))
       
-      let modelMatrix = float4x4(meshOrientation)
+      let modelMatrix = float4x4(modelOrientation)
 //      let modelMatrix = float4x4(rotationAbout: SIMD3<Float>(0, 1, 0), by: angle)
 //      let viewMatrix = float4x4(translationBy: SIMD3<Float>(0, -0.1, -0.2))
       let viewMatrix = float4x4(translationBy: SIMD3<Float>(0, 0, -0.2))

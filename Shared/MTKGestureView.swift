@@ -1,0 +1,18 @@
+//
+//  MTKGestureView.swift
+//  MeshViewer
+//
+//  Created by Robby on 3/4/21.
+//
+
+import MetalKit
+
+protocol MetalTouchDelegate {
+//  func didPress(x: Float, y: Float)
+  func didPress()
+  func didDrag(x: Float, y: Float)
+}
+
+class MTKGestureView: MTKView {
+  var touchDelegate: MetalTouchDelegate?
+}

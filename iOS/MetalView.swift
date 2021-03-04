@@ -10,16 +10,14 @@ import MetalKit
 
 struct MetalView: UIViewRepresentable {
 
-  let mtkView = MTKView()
-
   func makeCoordinator() -> Renderer {
-    let renderer = Renderer(self)
-    renderer.mtkView = self.mtkView
-    return renderer
+    Renderer(self)
   }
 
   func makeUIView(context: UIViewRepresentableContext<MetalView>) -> MTKView {
+    let mtkView = MTKTouchView()
     mtkView.delegate = context.coordinator
+    context.coordinator.mtkView = mtkView
     return mtkView
   }
 
