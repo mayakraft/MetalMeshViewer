@@ -10,8 +10,8 @@ using namespace metal;
 
 struct VertexIn {
   float3 position [[attribute(0)]];
-  float3 normal [[attribute(1)]];
-  float2 texCoords [[attribute(2)]];
+//  float3 normal [[attribute(1)]];
+//  float2 texCoords [[attribute(2)]];
 };
 
 struct VertexOut {
@@ -33,10 +33,10 @@ vertex VertexOut vertex_main(VertexIn vertexIn [[stage_in]],
   VertexOut vertexOut;
   vertexOut.position = uniforms.projectionMatrix * uniforms.modelViewMatrix * float4(vertexIn.position, 1);
   vertexOut.pos = float4(vertexIn.position, 1);
-  vertexOut.normal = vertexIn.normal;
-  vertexOut.eyeNormal = uniforms.modelViewMatrix * float4(vertexIn.normal, 0);
+//  vertexOut.normal = vertexIn.normal;
+//  vertexOut.eyeNormal = uniforms.modelViewMatrix * float4(vertexIn.normal, 0);
   vertexOut.eyePosition = uniforms.modelViewMatrix * float4(vertexIn.position, 1);
-  vertexOut.texCoords = vertexIn.texCoords;
+//  vertexOut.texCoords = vertexIn.texCoords;
   return vertexOut;
 }
 

@@ -7,15 +7,15 @@
 
 import SwiftUI
 
-// this is not necessary. make MacOS a translucent background
-// by making a visual effects view. only works on MacOS.
+// make a translucent background
+// only works on MacOS
 #if os(macOS)
 struct VisualEffectView: NSViewRepresentable {
   func makeNSView(context: Context) -> NSVisualEffectView {
     let view = NSVisualEffectView()
     view.blendingMode = .behindWindow
     view.isEmphasized = true
-//    view.material = .popover // .underWindowBackground
+    view.material = .underWindowBackground
     return view
   }
   func updateNSView(_ nsView: NSVisualEffectView, context: Context) { }
