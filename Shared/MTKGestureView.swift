@@ -8,7 +8,6 @@
 import MetalKit
 
 protocol MetalTouchDelegate {
-//  func didPress(x: Float, y: Float)
   func didPress()
   func didDrag(x: Float, y: Float)
 }

@@ -9,16 +9,20 @@ import Foundation
 import MetalKit
 import simd
 
+// when you load a mesh, make the camera zoom nicely to fit the mesh
+// by setting the "modelBounds" property
+
 class Camera: NSObject, MetalTouchDelegate {
-  internal let mtkView: MTKView
+  internal let mtkView: MTKGestureView
   var modelOrientation: simd_quatf = simd_quatf(ix: 0, iy: 0, iz: 0, r: 1)
   internal var touchDownOrientation: simd_quatf = simd_quatf(ix: 0, iy: 0, iz: 0, r: 1)
   internal var modelCenter: SIMD3<Float> = [0, 0, 0]
   internal var modelRadius: Float = 1 // half the largest diameter (largest along one axis)
 
-  init(with view:MTKView) {
+  init(view:MTKGestureView) {
     mtkView = view
     super.init()
+    mtkView.touchDelegate = self
   }
   
   // MARK: setters

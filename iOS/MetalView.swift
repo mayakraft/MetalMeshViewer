@@ -22,5 +22,6 @@ struct MetalView: UIViewRepresentable {
   }
 
   func updateUIView(_ uiView: MTKView, context: UIViewRepresentableContext<MetalView>) {
+    print("updateUIView not implemented")
   }
 }

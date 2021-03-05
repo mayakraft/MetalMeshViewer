@@ -25,5 +25,6 @@ struct MetalView: NSViewRepresentable {
   }
 
   func updateNSView(_ nsView: MTKView, context: NSViewRepresentableContext<MetalView>) {
+    print("updateNSView not implemented")
   }
 }

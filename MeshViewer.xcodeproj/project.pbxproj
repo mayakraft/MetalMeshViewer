@@ -25,6 +25,8 @@
 		D5B708FF25F0D65E00D18B50 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B708FD25F0D65E00D18B50 /* Math.swift */; };
 		D5B7090925F19C5300D18B50 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B7090825F19C5300D18B50 /* Camera.swift */; };
 		D5B7090A25F19C5300D18B50 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B7090825F19C5300D18B50 /* Camera.swift */; };
+		D5B7090E25F1B47E00D18B50 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B7090D25F1B47E00D18B50 /* Model.swift */; };
+		D5B7090F25F1B47E00D18B50 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B7090D25F1B47E00D18B50 /* Model.swift */; };
 		D5FCC2CB25F03417003D801F /* MTKMouseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5FCC2CA25F03417003D801F /* MTKMouseView.swift */; };
 		D5FCC2D625F05D09003D801F /* MTKTouchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5FCC2D525F05D09003D801F /* MTKTouchView.swift */; };
 		D5FCC2DC25F0611D003D801F /* MTKGestureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5FCC2DB25F0611D003D801F /* MTKGestureView.swift */; };
@@ -47,6 +49,7 @@
 		D5A9E89625EEFE40009D2464 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		D5B708FD25F0D65E00D18B50 /* Math.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
 		D5B7090825F19C5300D18B50 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
+		D5B7090D25F1B47E00D18B50 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		D5FCC2CA25F03417003D801F /* MTKMouseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTKMouseView.swift; sourceTree = "<group>"; };
 		D5FCC2D525F05D09003D801F /* MTKTouchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTKTouchView.swift; sourceTree = "<group>"; };
 		D5FCC2DB25F0611D003D801F /* MTKGestureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTKGestureView.swift; sourceTree = "<group>"; };
@@ -127,6 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				D5B708FD25F0D65E00D18B50 /* Math.swift */,
+				D5B7090D25F1B47E00D18B50 /* Model.swift */,
 				D5B7090825F19C5300D18B50 /* Camera.swift */,
 				D5A9E87225EEE2B7009D2464 /* Renderer.swift */,
 				D5A9E89625EEFE40009D2464 /* Shaders.metal */,
@@ -237,6 +241,7 @@
 				D5FCC2D625F05D09003D801F /* MTKTouchView.swift in Sources */,
 				D5A9E86A25EED030009D2464 /* MetalView.swift in Sources */,
 				D5A9E85725EED015009D2464 /* ContentView.swift in Sources */,
+				D5B7090E25F1B47E00D18B50 /* Model.swift in Sources */,
 				D5A9E87325EEE2B7009D2464 /* Renderer.swift in Sources */,
 				D5FCC2DC25F0611D003D801F /* MTKGestureView.swift in Sources */,
 				D5A9E85525EED015009D2464 /* MeshViewerApp.swift in Sources */,
@@ -253,6 +258,7 @@
 				D5A9E86625EED028009D2464 /* MetalView.swift in Sources */,
 				D5A9E85825EED015009D2464 /* ContentView.swift in Sources */,
 				D5A9E87425EEE2B7009D2464 /* Renderer.swift in Sources */,
+				D5B7090F25F1B47E00D18B50 /* Model.swift in Sources */,
 				D5A9E85625EED015009D2464 /* MeshViewerApp.swift in Sources */,
 				D5FCC2DD25F0611D003D801F /* MTKGestureView.swift in Sources */,
 				D5FCC2CB25F03417003D801F /* MTKMouseView.swift in Sources */,
