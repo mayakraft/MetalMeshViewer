@@ -152,8 +152,8 @@
 			children = (
 				D5B7092325F3C1FA00D18B50 /* Model.swift */,
 				D5B7091425F253AD00D18B50 /* ModelRaw.swift */,
-				D5B7090D25F1B47E00D18B50 /* ModelFile.swift */,
 				D5B7091B25F3C17500D18B50 /* ModelMesh.swift */,
+				D5B7090D25F1B47E00D18B50 /* ModelFile.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";

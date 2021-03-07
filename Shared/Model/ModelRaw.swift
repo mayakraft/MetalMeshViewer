@@ -15,7 +15,7 @@ import MetalKit
 class ModelRaw: Model {
   var vertexBuffer: MTLBuffer!
   var triangleBuffer: MTLBuffer!
-  var triangleIndexCount: Int = 0
+  var trianglesCount: Int = 0
 
   // get the bounding box by iterating over all the vertices
   // this assumes that there are no normals/colors mixed in
@@ -52,7 +52,7 @@ class ModelRaw: Model {
     triangleBuffer = device.makeBuffer(bytes: trianglesPointer,
                                        length: MemoryLayout<UInt16>.size * triangles.count,
                                        options: [])
-    triangleIndexCount = triangles.count
+    trianglesCount = triangles.count / 3
     vertexDescriptor = MTLVertexDescriptor()
     vertexDescriptor.attributes[0].format = MTLVertexFormat.float3
     vertexDescriptor.attributes[0].bufferIndex = 0
@@ -63,7 +63,7 @@ class ModelRaw: Model {
   override func draw(commandEncoder: MTLRenderCommandEncoder) {
     commandEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
     commandEncoder.drawIndexedPrimitives(type: MTLPrimitiveType.triangle,
-                                         indexCount: triangleIndexCount,
+                                         indexCount: trianglesCount * 3,
                                          indexType: MTLIndexType.uint16,
                                          indexBuffer: triangleBuffer,
                                          indexBufferOffset: 0)

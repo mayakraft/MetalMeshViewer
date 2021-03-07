@@ -8,14 +8,18 @@
 import Foundation
 import MetalKit
 
+// make a mesh by loading it from a file, using Metal's MeshIO
 class ModelFile: Model {
-  var asset: MDLAsset!
   var mdlMeshes: [MDLMesh] = []
   var mtkMeshes: [MTKMesh] = []
-  
+
   override var boundingBox: MDLAxisAlignedBoundingBox {
     get {
-      mdlMeshes.first!.boundingBox
+      if let mesh = mdlMeshes.first {
+        return mesh.boundingBox
+      } else {
+        return MDLAxisAlignedBoundingBox(maxBounds: [0, 0, 0], minBounds: [0, 0, 0])
+      }
     }
   }
 
@@ -38,9 +42,9 @@ class ModelFile: Model {
                                                         bufferIndex: 0)
     self.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(vertexDescriptor)
     let bufferAllocator = MTKMeshBufferAllocator(device: device)
-    asset = MDLAsset(url: file,
-                     vertexDescriptor: vertexDescriptor,
-                     bufferAllocator: bufferAllocator)
+    let asset = MDLAsset(url: file,
+                         vertexDescriptor: vertexDescriptor,
+                         bufferAllocator: bufferAllocator)
     do {
       (self.mdlMeshes, self.mtkMeshes) = try MTKMesh.newMeshes(asset: asset, device: device)
     } catch let error{

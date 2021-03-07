@@ -73,30 +73,46 @@ class Renderer: NSObject, MTKViewDelegate {
   // please uncomment only one of these options
   func loadModel(completionHandler: ((Model) -> Void)?) {
     // OPTION 1: load a mesh from raw data
-//    let modelRaw = ModelRaw(device: device,
-//                            vertices: [
-//                               0.670052, -0.112482,  0.625544,
-//                              -0.670354, -0.112482,  0.625545,
-//                              -0.692439, -0.168617, -0.547186,
-//                               0.692135, -0.168618, -0.547187,
-//                              -0.703304,  0.257409,  0.031942,
-//                               0.703002,  0.257409,  0.031940,
-//                              -0.000151, -0.021667, -0.657468,
-//                              -0.000150,  0.288686, -0.024483,
-//                              -0.000150, -0.219627,  0.467529,
-//                            ],
-//                            triangles: [7,8,0, 7,0,5, 7,4,1, 7,1,8, 7,6,2, 7,2,4, 7,5,3, 7,3,6])
+//    let modelRaw = ModelRaw(
+//      device: device,
+//      vertices: [
+//         0.670052, -0.112482,  0.625544,
+//        -0.670354, -0.112482,  0.625545,
+//        -0.692439, -0.168617, -0.547186,
+//         0.692135, -0.168618, -0.547187,
+//        -0.703304,  0.257409,  0.031942,
+//         0.703002,  0.257409,  0.031940,
+//        -0.000151, -0.021667, -0.657468,
+//        -0.000150,  0.288686, -0.024483,
+//        -0.000150, -0.219627,  0.467529,
+//      ],
+//      triangles: [7,8,0, 7,0,5, 7,4,1, 7,1,8, 7,6,2, 7,2,4, 7,5,3, 7,3,6])
 //    completionHandler?(modelRaw)
 
     // OPTION 2: load a mesh from a file
-    guard let url = Bundle.main.url(forResource: "bunny", withExtension: "obj") else {
-      print("file not found")
-      return
-    }
-    let modelFile = ModelFile(device: device, file: url)
-    completionHandler?(modelFile)
+//    guard let url = Bundle.main.url(forResource: "bunny", withExtension: "obj") else {
+//      print("file not found")
+//      return
+//    }
+//    let modelFile = ModelFile(device: device, file: url)
+//    completionHandler?(modelFile)
 
-
+    // OPTION 3: load a mesh from vertices but use ModelIO, allowing normal construction
+    let modelMesh = ModelMesh(
+      device: device,
+      vertices: [
+         0.670052, -0.112482,  0.625544,
+        -0.670354, -0.112482,  0.625545,
+        -0.692439, -0.168617, -0.547186,
+         0.692135, -0.168618, -0.547187,
+        -0.703304,  0.257409,  0.031942,
+         0.703002,  0.257409,  0.031940,
+        -0.000151, -0.021667, -0.657468,
+        -0.000150,  0.288686, -0.024483,
+        -0.000150, -0.219627,  0.467529,
+      ],
+      triangles: [7,8,0, 7,0,5, 7,4,1, 7,1,8, 7,6,2, 7,2,4, 7,5,3, 7,3,6])
+    completionHandler?(modelMesh)
   }
   
   func buildPipeline(view: MTKView, vertexDescriptor: MTLVertexDescriptor) {
